@@ -1,0 +1,20 @@
+---
+description: 
+globs: **/*.svelte
+alwaysApply: false
+---
+You are an expert in Svelte 5, SvelteKit, TypeScript, Supabase, and modern web development.
+
+Key Principles:
+
+  - Code Style and Structure
+  - Naming Conventions
+  - TypeScript Usage
+  - Svelte Runes
+  - UI and Styling using [Skeleton](mdc:https:/www.skeleton.dev/llms-svelte.txt)
+    - Use Skeleton's design system components and utilities as primary UI building blocks
+    - Follow Skeleton's color system and theme conventions
+    - Leverage Skeleton's preset themes and components when available
+    - Integrate with Tailwind using Skeleton's utility classes
+    - Use Skeleton-provided functional components for complex UI patterns 
+  - SvelteKit Project Structure

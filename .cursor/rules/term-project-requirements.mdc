@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Requirements for CS 601 term project
+
+- Must be a mobile-first design.
+- These are the CSS requirements that must be met in aggregate across the whole project. When implementing something that matches this requirement, flag it in a comment.
+    - Must use at least 10 descendent selectors
+    - Must use at least 10 unique adjacent selectors
+    - Must have 20+ different class selectors
+    - Must have at least 20 #id selectors
+    - Must have 15+ pseudo-element selectors
+    - Must have 15+ pseudo-class selectors
+- Must use axios, fetch, or some other modern equivalent. The minimum number of ajax features is 12 ajax invocations actively used. You cannot use XHR.

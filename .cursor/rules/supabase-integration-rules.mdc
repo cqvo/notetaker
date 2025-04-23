@@ -1,0 +1,8 @@
+---
+description: 
+globs: src/lib/supabase/**/*.ts
+alwaysApply: false
+---
+- The Supabase project name is `notetaker` under the organization `WumboTech`
+- Follow best practices for Supabase integration, including data fetching and authentication.
+- Use TypeScript for type safety when interacting with Supabase.

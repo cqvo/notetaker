@@ -1,38 +1,79 @@
-# sv
+# Notetaker
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A modern, frictionless note-taking application that emphasizes organic organization through tags and note references rather than rigid hierarchical structures.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Frictionless Note Creation
+- Create notes instantly without worrying about organization
+- No folders or directory structures to manage
+- Focus on writing, not organizing
+- Automatic timestamp tracking
 
-```bash
-# create a new project in the current directory
-npx sv create
+### Smart Tagging System
+- Tag notes using simple `#tag` syntax
+- Tags are automatically detected and indexed
+- Case-insensitive tag matching
+- Multiple tags per note
+- Organic tag categorization - no predefined structure
 
-# create a new project in my-app
-npx sv create my-app
-```
+### Powerful Note References
+- Link notes together using `[[note-title]]` syntax
+- Bi-directional references - see both what a note references and what references it
+- Smart reference handling for renamed or deleted notes
+- Interactive reference navigation
+- Circular reference protection
 
-## Developing
+### Intelligent Search & Discovery
+- Real-time search as you type
+- Search by tags to find related notes
+- View referenced notes alongside search results
+- Clear visualization of note relationships
+- Multiple tag filtering support
+- Expandable/collapsible note references
+- Tag cloud interface for discovery
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Modern User Interface
+- Clean, distraction-free note editor
+- Real-time tag and reference highlighting
+- Markdown support
+- Intuitive search interface
+- Visual relationship mapping
+- Easy navigation between connected notes
 
-```bash
-npm run dev
+### Robust Data Management
+- Automatic saving
+- Conflict resolution for concurrent edits
+- Data backup support
+- Reference integrity maintenance
+- Large note support (>100KB)
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Technical Specifications
 
-## Building
+### Performance Targets
+- Note creation: < 100ms
+- Note loading: < 200ms
+- Search results: < 500ms
+- Tag filtering: < 300ms
 
-To create a production version of your app:
+### Scalability
+- Supports 10,000+ notes
+- Handles 1,000+ unique tags
+- Manages 10,000+ note references
+- Efficient large content handling
 
-```bash
-npm run build
-```
+## Getting Started
 
-You can preview the production build with `npm run preview`.
+[Installation instructions will be added once development begins]
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Development
+
+[Development setup instructions will be added once development begins]
+
+## Contributing
+
+[Contribution guidelines will be added once development begins]
+
+## License
+
+[License information will be added]
