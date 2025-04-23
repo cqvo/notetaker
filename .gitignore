@@ -21,3 +21,7 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Cursor config
+.cursor/mcp.json
+!.cursor/mcp.json.example
