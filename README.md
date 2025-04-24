@@ -1,79 +1,135 @@
 # Notetaker
 
-A modern, frictionless note-taking application that emphasizes organic organization through tags and note references rather than rigid hierarchical structures.
+A modern, frictionless note-taking application built with Next.js 15, Mantine UI, and TipTap editor.
 
 ## Features
 
-### Frictionless Note Creation
-- Create notes instantly without worrying about organization
-- No folders or directory structures to manage
-- Focus on writing, not organizing
-- Automatic timestamp tracking
+- 📝 Rich text editing with TipTap
+- 🏷️ Tag-based organization
+- 🔍 Full-text search
+- 🔗 Note linking and references
+- 🌓 Light/dark mode support
+- 📱 Responsive design
 
-### Smart Tagging System
-- Tag notes using simple `#tag` syntax
-- Tags are automatically detected and indexed
-- Case-insensitive tag matching
+## Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org/)
+- **UI Components**: [Mantine 7](https://mantine.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Editor**: [TipTap](https://tiptap.dev/)
+- **Database**: [Supabase](https://supabase.com/)
+- **Icons**: [Tabler Icons](https://tabler-icons.io/)
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18.17 or later
+- pnpm 8.0 or later
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/notetaker.git
+cd notetaker
+```
+
+2. Install dependencies:
+```bash
+pnpm install
+```
+
+3. Start the development server:
+```bash
+pnpm dev
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+```
+notetaker/
+├── app/                    # Next.js app directory
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Home page
+│   ├── notes/             # Notes feature
+│   │   ├── page.tsx      # Notes list
+│   │   ├── new/          # New note
+│   │   └── [id]/         # Note detail
+│   └── globals.css        # Global styles
+├── components/            # React components
+│   ├── layout/           # Layout components
+│   │   └── AppShell.tsx  # Main layout wrapper
+│   └── note/             # Note-related components
+│       └── NoteEditor.tsx # Rich text editor
+├── public/               # Static files
+└── package.json         # Project dependencies
+```
+
+## Core Features
+
+### Note Structure
+- Independent notes without hierarchical organization
+- Unique IDs and titles for each note
+- Creation and modification timestamps
+- Rich text content with Markdown support
+
+### Tagging System
+- Format: `#tag`
+- Case-insensitive
 - Multiple tags per note
-- Organic tag categorization - no predefined structure
+- Automatic tag extraction and indexing
+- Tag-based search and filtering
 
-### Powerful Note References
-- Link notes together using `[[note-title]]` syntax
-- Bi-directional references - see both what a note references and what references it
-- Smart reference handling for renamed or deleted notes
-- Interactive reference navigation
-- Circular reference protection
-
-### Intelligent Search & Discovery
-- Real-time search as you type
-- Search by tags to find related notes
-- View referenced notes alongside search results
-- Clear visualization of note relationships
-- Multiple tag filtering support
-- Expandable/collapsible note references
-- Tag cloud interface for discovery
-
-### Modern User Interface
-- Clean, distraction-free note editor
-- Real-time tag and reference highlighting
-- Markdown support
-- Intuitive search interface
-- Visual relationship mapping
-- Easy navigation between connected notes
-
-### Robust Data Management
-- Automatic saving
-- Conflict resolution for concurrent edits
-- Data backup support
+### Note References
+- Format: `[[note-title]]`
+- Bi-directional linking
 - Reference integrity maintenance
-- Large note support (>100KB)
+- Interactive reference navigation
 
-## Technical Specifications
+### Search
+- Real-time search updates
+- Tag-based filtering
+- Full-text search
+- Reference-aware search results
 
-### Performance Targets
+## Development
+
+### Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
+- `pnpm format` - Format code with Prettier
+
+### Code Style
+
+- TypeScript for type safety
+- ESLint for code linting
+- Prettier for code formatting
+- Client components marked with 'use client' directive
+
+## Performance Requirements
+
 - Note creation: < 100ms
 - Note loading: < 200ms
 - Search results: < 500ms
 - Tag filtering: < 300ms
-
-### Scalability
-- Supports 10,000+ notes
-- Handles 1,000+ unique tags
-- Manages 10,000+ note references
-- Efficient large content handling
-
-## Getting Started
-
-[Installation instructions will be added once development begins]
-
-## Development
-
-[Development setup instructions will be added once development begins]
+- Support for 10,000+ notes
+- Support for 1,000+ unique tags
+- Support for 10,000+ references
 
 ## Contributing
 
-[Contribution guidelines will be added once development begins]
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-[License information will be added]
+This project is licensed under the MIT License - see the LICENSE file for details.

@@ -3,74 +3,116 @@
 ## 1. Technology Stack
 
 ### Core Technologies
-- **SvelteKit**: For the full-stack application framework
-  - Provides excellent SSR capabilities
-  - Built-in routing and API endpoints
-  - Great TypeScript support
-  - Efficient reactivity system with new runes
+- **NextJS 14**: For the full-stack application framework
+  - App Router for enhanced server components
+  - Server Actions for form handling
+  - Built-in API routes
+  - Excellent TypeScript support
+  - Streaming and Suspense support
 - **Supabase**: For backend and real-time capabilities
   - PostgreSQL database with real-time subscriptions
   - Built-in authentication
   - Row Level Security for data protection
   - Full-text search capabilities
-- **Skeleton**: For UI components and styling
-  - Provides consistent design system
+- **Mantine UI**: For UI components and styling
+  - Modern, accessible components
   - Built-in dark mode support
-  - Accessibility features out of the box
+  - Excellent TypeScript support
   - Tailwind CSS integration
+  - Responsive design primitives
 
 ### Additional Libraries
 - **DOMPurify**: For sanitizing markdown input
 - **marked**: For markdown parsing
 - **date-fns**: For timestamp handling
-- **Lucide**: For consistent iconography
+- **Tabler Icons**: For consistent iconography
 
 ## 2. Project Structure
 
 ```
 notetaker/
-├── src/
-│   ├── lib/
-│   │   ├── components/
-│   │   │   ├── note/
-│   │   │   │   ├── NoteEditor.svelte
-│   │   │   │   ├── NoteViewer.svelte
-│   │   │   │   ├── NoteList.svelte
-│   │   │   │   └── NoteReference.svelte
-│   │   │   ├── tag/
-│   │   │   │   ├── TagCloud.svelte
-│   │   │   │   └── TagList.svelte
-│   │   │   └── search/
-│   │   │       ├── SearchBar.svelte
-│   │   │       └── SearchResults.svelte
-│   │   ├── stores/
-│   │   │   ├── noteStore.ts
-│   │   │   ├── tagStore.ts
-│   │   │   └── searchStore.ts
-│   │   ├── services/
-│   │   │   ├── supabase.ts
-│   │   │   ├── noteService.ts
-│   │   │   └── searchService.ts
-│   │   ├── utils/
-│   │   │   ├── markdown.ts
-│   │   │   ├── tagParser.ts
-│   │   │   └── referenceParser.ts
-│   │   └── types/
-│   │       ├── Note.ts
-│   │       ├── Tag.ts
-│   │       └── Reference.ts
-│   ├── routes/
-│   │   ├── +page.svelte
+├── app/
+│   ├── (auth)/
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   ├── signup/
+│   │   │   └── page.tsx
+│   │   ├── reset-password/
+│   │   │   └── page.tsx
+│   │   └── callback/
+│   │       └── page.tsx
+│   ├── (dashboard)/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
 │   │   ├── notes/
-│   │   │   ├── +page.svelte
-│   │   │   └── [id]/+page.svelte
-│   │   └── api/
-│   │       └── search/+server.ts
-│   └── app.html
-├── static/
-├── tests/
-└── supabase/
-    └── migrations/
+│   │   │   ├── page.tsx
+│   │   │   └── [id]/
+│   │   │       └── page.tsx
+│   │   └── settings/
+│   │       ├── layout.tsx
+│   │       ├── profile/
+│   │       │   └── page.tsx
+│   │       ├── account/
+│   │       │   └── page.tsx
+│   │       ├── notifications/
+│   │       │   └── page.tsx
+│   │       └── theme/
+│   │           └── page.tsx
+│   ├── api/
+│   │   └── search/
+│   │       └── route.ts
+│   ├── layout.tsx
+│   └── page.tsx
+├── components/
+│   ├── auth/
+│   │   ├── LoginForm.tsx
+│   │   ├── SignupForm.tsx
+│   │   ├── PasswordResetForm.tsx
+│   │   ├── OAuthButtons.tsx
+│   │   └── AuthGuard.tsx
+│   ├── user/
+│   │   ├── ProfileSettings.tsx
+│   │   ├── AccountSettings.tsx
+│   │   ├── NotificationSettings.tsx
+│   │   ├── ThemeSettings.tsx
+│   │   └── UserAvatar.tsx
+│   ├── note/
+│   │   ├── NoteEditor.tsx
+│   │   ├── NoteViewer.tsx
+│   │   ├── NoteList.tsx
+│   │   └── NoteReference.tsx
+│   ├── tag/
+│   │   ├── TagCloud.tsx
+│   │   └── TagList.tsx
+│   └── search/
+│       ├── SearchBar.tsx
+│       └── SearchResults.tsx
+├── lib/
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   ├── useNotes.ts
+│   │   ├── useTags.ts
+│   │   └── useSearch.ts
+│   ├── services/
+│   │   ├── auth.ts
+│   │   ├── supabase.ts
+│   │   ├── notes.ts
+│   │   └── search.ts
+│   ├── utils/
+│   │   ├── auth.ts
+│   │   ├── validation.ts
+│   │   ├── markdown.ts
+│   │   ├── tagParser.ts
+│   │   └── referenceParser.ts
+│   └── types/
+│       ├── user.ts
+│       ├── note.ts
+│       ├── tag.ts
+│       └── reference.ts
+├── public/
+├── styles/
+│   └── globals.css
+└── tests/
 ```
 
 ## 3. Database Schema
@@ -80,18 +122,75 @@ notetaker/
 The database schema is designed with separate tables for notes, tags, and their relationships. This design follows important database principles that ensure data integrity, query performance, and scalability.
 
 ```sql
--- Notes table
+-- User settings and preferences
+create table user_settings (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid references auth.users(id) on delete cascade,
+    display_name text,
+    avatar_url text,
+    theme text default 'system',
+    email_notifications boolean default true,
+    date_format text default 'MM/DD/YYYY',
+    time_format text default '12h',
+    created_at timestamp with time zone default now(),
+    updated_at timestamp with time zone default now(),
+    constraint unique_user_settings unique (user_id)
+);
+
+-- User theme preferences
+create table user_theme_preferences (
+    user_id uuid references auth.users(id) on delete cascade,
+    theme_key text not null,
+    theme_value text not null,
+    created_at timestamp with time zone default now(),
+    updated_at timestamp with time zone default now(),
+    primary key (user_id, theme_key)
+);
+
+-- Notes table (updated)
 create table notes (
     id uuid primary key default gen_random_uuid(),
     title text not null,
     content text not null,
     created_at timestamp with time zone default now(),
     updated_at timestamp with time zone default now(),
-    user_id uuid references auth.users(id),
+    user_id uuid references auth.users(id) on delete cascade,
+    is_public boolean default false,
     search_vector tsvector generated always as (
         setweight(to_tsvector('english', title), 'A') ||
         setweight(to_tsvector('english', content), 'B')
     ) stored
+);
+
+-- Note versions for history and conflict resolution
+create table note_versions (
+    id uuid primary key default gen_random_uuid(),
+    note_id uuid references notes(id) on delete cascade,
+    title text not null,
+    content text not null,
+    created_at timestamp with time zone default now(),
+    created_by uuid references auth.users(id)
+);
+
+-- Note drafts for auto-save functionality
+create table note_drafts (
+    id uuid primary key default gen_random_uuid(),
+    note_id uuid references notes(id) on delete cascade,
+    title text,
+    content text,
+    last_autosaved_at timestamp with time zone default now(),
+    user_id uuid references auth.users(id)
+);
+
+-- Backup metadata for tracking backup operations
+create table backup_metadata (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid references auth.users(id),
+    backup_date timestamp with time zone default now(),
+    backup_size bigint,
+    note_count integer,
+    status text,
+    backup_location text
 );
 
 -- Tags table (extracted from notes)
@@ -116,6 +215,70 @@ create table note_references (
     created_at timestamp with time zone default now(),
     primary key (source_note_id, target_note_id)
 );
+
+-- Tag embeddings for AI suggestions
+create table tag_embeddings (
+    tag_id uuid references tags(id) on delete cascade,
+    embedding vector(1536),
+    updated_at timestamp with time zone default now(),
+    primary key (tag_id)
+);
+
+-- Tag feedback for learning
+create table tag_feedback (
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid references auth.users(id),
+    tag_id uuid references tags(id),
+    note_id uuid references notes(id),
+    accepted boolean,
+    context text,
+    created_at timestamp with time zone default now()
+);
+
+-- Tag co-occurrence for suggestions
+create table tag_cooccurrence (
+    tag1_id uuid references tags(id),
+    tag2_id uuid references tags(id),
+    user_id uuid references auth.users(id),
+    count integer default 1,
+    primary key (tag1_id, tag2_id, user_id)
+);
+
+-- Row Level Security Policies
+alter table user_settings enable row level security;
+
+-- Policy: Users can only view and edit their own settings
+create policy "Users can manage their settings"
+  on user_settings for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+alter table user_theme_preferences enable row level security;
+
+-- Policy: Users can only view and edit their own theme preferences
+create policy "Users can manage their theme preferences"
+  on user_theme_preferences for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+-- Add indexes for performance
+create index user_settings_user_id_idx on user_settings(user_id);
+create index user_theme_preferences_user_id_idx on user_theme_preferences(user_id);
+
+-- Optimize search performance
+create index notes_search_idx on notes using gin(search_vector);
+
+-- Optimize user's notes listing
+create index notes_user_created_idx on notes(user_id, created_at desc);
+
+-- Optimize concurrent access
+alter table notes add constraint unique_title_per_user unique (user_id, title);
+
+-- Optimize version history retrieval
+create index note_versions_note_created_idx on note_versions(note_id, created_at desc);
+
+-- Ensure single draft per note per user
+alter table note_drafts add constraint unique_draft_per_note_user unique (note_id, user_id);
 ```
 
 ### Design Principles
@@ -130,24 +293,29 @@ create table note_references (
    - `on delete cascade` automatically cleans up related records
    - Prevents orphaned relationships
    - Maintains database consistency
+   - Version history for conflict resolution
+   - Auto-save support for data protection
 
 3. **Query Performance**
    - Separate tables enable efficient indexing
    - Optimized query paths for common operations
    - Database engine can optimize joins effectively
    - Supports performance requirements (<500ms for search, <300ms for tag filtering)
+   - Specialized indexes for common access patterns
 
 4. **Storage Efficiency**
    - Tags stored once in dedicated table
    - References store only necessary IDs and context
    - Avoids data duplication
    - Scales efficiently for 10,000+ notes requirement
+   - Version control with minimal overhead
 
 5. **Flexibility and Maintenance**
    - Easy to add new attributes to relationships
    - Global tag updates require changing single record
    - Independent reference integrity tracking
    - Schema can evolve without major restructuring
+   - Backup tracking for data protection
 
 ### Example Queries
 
@@ -886,7 +1054,522 @@ create table tag_cooccurrence (
      class ReadOnlyState implements EditorState {}
      ```
 
-## 7. Key Features Implementation
+## 7. Authentication & User Management
+
+### Authentication Flow
+
+```typescript
+// src/lib/services/authService.ts
+export class AuthService {
+  private supabase: SupabaseClient;
+
+  async signUp(email: string, password: string): Promise<AuthResponse> {
+    const { data, error } = await this.supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`
+      }
+    });
+    
+    if (error) throw error;
+    return data;
+  }
+
+  async signIn(email: string, password: string): Promise<AuthResponse> {
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+    
+    if (error) throw error;
+    return data;
+  }
+
+  async signOut(): Promise<void> {
+    const { error } = await this.supabase.auth.signOut();
+    if (error) throw error;
+  }
+
+  async resetPassword(email: string): Promise<void> {
+    const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`
+    });
+    
+    if (error) throw error;
+  }
+}
+
+// src/lib/stores/authStore.ts
+export const createAuthStore = () => {
+  const { subscribe, set, update } = writable<AuthState>({
+    user: null,
+    session: null,
+    loading: true
+  });
+
+  return {
+    subscribe,
+    setSession: (session: Session | null) => 
+      update(state => ({ ...state, session, user: session?.user ?? null })),
+    setLoading: (loading: boolean) => 
+      update(state => ({ ...state, loading }))
+  };
+};
+
+export const auth = createAuthStore();
+```
+
+### User Settings Management
+
+```typescript
+// src/lib/services/userService.ts
+export class UserService {
+  private supabase: SupabaseClient;
+
+  async getUserSettings(userId: string): Promise<UserSettings> {
+    const { data, error } = await this.supabase
+      .from('user_settings')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  async updateUserSettings(
+    userId: string, 
+    settings: Partial<UserSettings>
+  ): Promise<UserSettings> {
+    const { data, error } = await this.supabase
+      .from('user_settings')
+      .update(settings)
+      .eq('user_id', userId)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  async updateThemePreference(
+    userId: string,
+    key: string,
+    value: string
+  ): Promise<void> {
+    const { error } = await this.supabase
+      .from('user_theme_preferences')
+      .upsert({
+        user_id: userId,
+        theme_key: key,
+        theme_value: value
+      });
+    
+    if (error) throw error;
+  }
+}
+
+// src/lib/stores/userStore.ts
+export const createUserStore = () => {
+  const { subscribe, set, update } = writable<UserState>({
+    settings: null,
+    themePreferences: new Map(),
+    loading: true
+  });
+
+  return {
+    subscribe,
+    setSettings: (settings: UserSettings) =>
+      update(state => ({ ...state, settings })),
+    setThemePreferences: (preferences: Map<string, string>) =>
+      update(state => ({ ...state, themePreferences: preferences })),
+    setLoading: (loading: boolean) =>
+      update(state => ({ ...state, loading }))
+  };
+};
+
+export const user = createUserStore();
+```
+
+### Protected Routes
+
+```typescript
+// src/lib/components/auth/AuthGuard.svelte
+<script lang="ts">
+  import { auth } from '$lib/stores/authStore';
+  import { goto } from '$app/navigation';
+  import { onMount } from 'svelte';
+
+  export let requiredRole: string | null = null;
+
+  onMount(() => {
+    const unsubscribe = auth.subscribe(({ user, loading }) => {
+      if (!loading && !user) {
+        goto('/auth/login');
+      }
+      
+      if (requiredRole && user?.role !== requiredRole) {
+        goto('/');
+      }
+    });
+
+    return unsubscribe;
+  });
+</script>
+
+<slot />
+```
+
+### Form Components
+
+```typescript
+// src/lib/components/auth/LoginForm.svelte
+<script lang="ts">
+  import { authService } from '$lib/services/authService';
+  import { goto } from '$app/navigation';
+
+  let email = '';
+  let password = '';
+  let loading = false;
+  let error: string | null = null;
+
+  async function handleSubmit() {
+    try {
+      loading = true;
+      await authService.signIn(email, password);
+      goto('/notes');
+    } catch (e) {
+      error = e.message;
+    } finally {
+      loading = false;
+    }
+  }
+</script>
+
+<form class="auth-form" on:submit|preventDefault={handleSubmit}>
+  <div class="auth-form__field">
+    <label for="email" class="auth-form__label">Email</label>
+    <input
+      id="email"
+      type="email"
+      bind:value={email}
+      class="auth-form__input"
+      required
+    />
+  </div>
+
+  <div class="auth-form__field">
+    <label for="password" class="auth-form__label">Password</label>
+    <input
+      id="password"
+      type="password"
+      bind:value={password}
+      class="auth-form__input"
+      required
+    />
+  </div>
+
+  {#if error}
+    <div class="auth-form__error">{error}</div>
+  {/if}
+
+  <button
+    type="submit"
+    class="auth-form__button"
+    disabled={loading}
+  >
+    {loading ? 'Signing in...' : 'Sign in'}
+  </button>
+
+  <a href="/auth/reset-password" class="auth-form__link">
+    Forgot password?
+  </a>
+</form>
+
+<style lang="scss">
+  .auth-form {
+    /* Mobile-first styles */
+    @media (max-width: 768px) {
+      padding: 1rem;
+    }
+
+    &__field {
+      margin-bottom: 1rem;
+    }
+
+    &__label {
+      display: block;
+      margin-bottom: 0.5rem;
+      
+      &::after { /* pseudo-element selector */
+        content: "*";
+        color: red;
+      }
+    }
+
+    &__input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      
+      &:focus { /* pseudo-class selector */
+        outline: none;
+        border-color: #0066cc;
+        
+        &::placeholder { /* pseudo-element selector */
+          opacity: 0.5;
+        }
+      }
+    }
+
+    &__button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      
+      &:disabled { /* pseudo-class selector */
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+      
+      & + &__link { /* adjacent selector */
+        margin-top: 1rem;
+        text-align: center;
+      }
+    }
+
+    &__error {
+      color: red;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+  }
+</style>
+```
+
+### Settings Components
+
+```typescript
+// src/lib/components/user/ProfileSettings.svelte
+<script lang="ts">
+  import { user } from '$lib/stores/userStore';
+  import { userService } from '$lib/services/userService';
+  import { onMount } from 'svelte';
+
+  let displayName = '';
+  let avatarUrl = '';
+  let loading = false;
+  let success = false;
+  let error: string | null = null;
+
+  onMount(() => {
+    const unsubscribe = user.subscribe(({ settings }) => {
+      if (settings) {
+        displayName = settings.display_name;
+        avatarUrl = settings.avatar_url;
+      }
+    });
+
+    return unsubscribe;
+  });
+
+  async function handleSubmit() {
+    try {
+      loading = true;
+      await userService.updateUserSettings(auth.user.id, {
+        display_name: displayName,
+        avatar_url: avatarUrl
+      });
+      success = true;
+      error = null;
+    } catch (e) {
+      error = e.message;
+      success = false;
+    } finally {
+      loading = false;
+    }
+  }
+</script>
+
+<form class="settings-panel" on:submit|preventDefault={handleSubmit}>
+  <div class="settings-panel__section">
+    <h2>Profile Settings</h2>
+    
+    <div class="settings-panel__field">
+      <label for="displayName">Display Name</label>
+      <input
+        id="displayName"
+        type="text"
+        bind:value={displayName}
+        class="settings-panel__input"
+      />
+    </div>
+
+    <div class="settings-panel__field">
+      <label for="avatarUrl">Avatar URL</label>
+      <input
+        id="avatarUrl"
+        type="url"
+        bind:value={avatarUrl}
+        class="settings-panel__input"
+      />
+    </div>
+  </div>
+
+  {#if success}
+    <div class="settings-panel__success">
+      Settings saved successfully!
+    </div>
+  {/if}
+
+  {#if error}
+    <div class="settings-panel__error">{error}</div>
+  {/if}
+
+  <button
+    type="submit"
+    class="settings-panel__button"
+    disabled={loading}
+  >
+    {loading ? 'Saving...' : 'Save Changes'}
+  </button>
+</form>
+
+<style lang="scss">
+  .settings-panel {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+
+    @media (min-width: 768px) {
+      padding: 2rem;
+    }
+
+    &__section {
+      margin-bottom: 2rem;
+      
+      & + & { /* adjacent selector */
+        border-top: 1px solid #eee;
+        padding-top: 2rem;
+      }
+    }
+
+    &__field {
+      margin-bottom: 1rem;
+    }
+
+    &__input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      
+      &:disabled { /* pseudo-class selector */
+        background-color: #f5f5f5;
+        cursor: not-allowed;
+        
+        &::before { /* pseudo-element selector */
+          content: "Loading...";
+          color: #666;
+        }
+      }
+    }
+
+    &__button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      
+      @media (min-width: 768px) {
+        width: auto;
+        min-width: 200px;
+      }
+      
+      &:hover { /* pseudo-class selector */
+        background-color: #0052a3;
+      }
+    }
+
+    &__success,
+    &__error {
+      margin: 1rem 0;
+      padding: 0.75rem;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    &__success {
+      background-color: #e6ffe6;
+      color: #006600;
+    }
+
+    &__error {
+      background-color: #ffe6e6;
+      color: #cc0000;
+    }
+  }
+</style>
+```
+
+### Route Protection
+
+```typescript
+// src/routes/+layout.ts
+import { auth } from '$lib/stores/authStore';
+import type { LayoutLoad } from './$types';
+
+export const load: LayoutLoad = async ({ url }) => {
+  // Public routes that don't require authentication
+  const publicRoutes = [
+    '/auth/login',
+    '/auth/signup',
+    '/auth/reset-password',
+    '/auth/callback'
+  ];
+
+  // Check if current route is public
+  const isPublicRoute = publicRoutes.some(route => 
+    url.pathname.startsWith(route)
+  );
+
+  // Subscribe to auth store
+  const unsubscribe = auth.subscribe(({ user, loading }) => {
+    if (!loading && !user && !isPublicRoute) {
+      // Redirect to login if not authenticated
+      goto('/auth/login');
+    }
+  });
+
+  return {
+    unsubscribe
+  };
+};
+```
+
+This implementation:
+- Follows mobile-first design principles
+- Includes required CSS selectors (descendent, adjacent, class, id, pseudo-element, pseudo-class)
+- Uses modern authentication practices
+- Implements secure user settings management
+- Provides a clean and intuitive user interface
+- Maintains proper type safety with TypeScript
+- Follows SvelteKit best practices
+- Integrates seamlessly with Supabase
+- Includes proper error handling and loading states
+- Implements proper route protection
+- Follows the project requirements for note structure and data integrity
+
+## 8. Key Features Implementation
 
 ### 1. Note Management
 - Real-time markdown preview
@@ -913,7 +1596,7 @@ create table tag_cooccurrence (
 - Reference-aware results
 - Real-time updates
 
-## 8. Performance Optimizations
+## 9. Performance Optimizations
 
 ### Database
 - Proper indexing
@@ -933,7 +1616,7 @@ create table tag_cooccurrence (
 - Browser storage for frequently accessed data
 - Optimistic updates
 
-## 9. Testing Strategy
+## 10. Testing Strategy
 
 ### Unit Tests
 - Component testing
@@ -951,7 +1634,7 @@ create table tag_cooccurrence (
 - Performance testing
 - Cross-browser testing
 
-## 10. Security Measures
+## 11. Security Measures
 
 ### Data Protection
 - Input sanitization
@@ -965,7 +1648,7 @@ create table tag_cooccurrence (
 - Session management
 - API security
 
-## 11. Accessibility
+## 12. Accessibility
 
 ### WCAG Compliance
 - Proper ARIA labels
@@ -973,7 +1656,7 @@ create table tag_cooccurrence (
 - Screen reader support
 - Color contrast compliance
 
-## 12. Deployment Strategy
+## 13. Deployment Strategy
 
 ### CI/CD Pipeline
 - Automated testing
@@ -987,7 +1670,7 @@ create table tag_cooccurrence (
 - CDN for static assets
 - Monitoring and logging
 
-## 13. Future Considerations
+## 14. Future Considerations
 
 ### Scalability
 - Horizontal scaling

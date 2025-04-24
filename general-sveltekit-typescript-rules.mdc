@@ -1,6 +1,0 @@
-  - UI and Styling using [Skeleton](https://www.skeleton.dev/llms-svelte.txt)
-    - Use Skeleton's design system components and utilities as primary UI building blocks
-    - Follow Skeleton's color system and theme conventions
-    - Leverage Skeleton's preset themes and components when available
-    - Integrate with Tailwind using Skeleton's utility classes
-    - Use Skeleton-provided functional components for complex UI patterns 
